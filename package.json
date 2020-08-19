@@ -1,0 +1,35 @@
+{
+  "name": "complex-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "watch": "start nodemon db --ignore frontend-js --ignore public/ && start webpack --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "axios": "^0.19.2",
+    "babel-loader": "^8.1.0",
+    "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^3.2.0",
+    "dompurify": "^2.0.12",
+    "dotenv": "^8.2.0",
+    "ejs": "^2.7.4",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "marked": "^1.1.1",
+    "md5": "^2.2.1",
+    "mongodb": "^3.5.9",
+    "nodemon": "^1.19.4",
+    "sanitize-html": "^1.27.1",
+    "validator": "^13.1.1",
+    "webpack": "^4.44.0",
+    "webpack-cli": "^3.3.12"
+  }
+}
