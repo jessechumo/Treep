@@ -24,13 +24,15 @@ Follow.prototype.validate = async  function(action){
     else{
         this.errors.push("you cannot follow a user that does not exist.")
     }
-    let doesFollowAlreadyExist = await followsCollection.findOne({followedId:this.followedId,authorId: new ObjectID(this.authorId)})
-    if (action = "create"){
+    let doesFollowAlreadyExist = await followsCollection.findOne({followedId:this.followedId, authorId: new ObjectID(this.authorId)})
+    if (action == "create"){
         if(doesFollowAlreadyExist){this.errors.push("you are already following this user")}
     }
-    if (action = "delete"){
-        if(!doesFollowAlreadyExist){this.errors.push("you cannot unfollow someone you dont follow ")}
+    if (action == "delete"){
+        if(!doesFollowAlreadyExist){this.errors.push("you cannot unfollow someone you don't follow ")}
     }
+    // you should not follow yourself
+    if(this.followedId.equals(this.authorId)) {this.errors.push("You cannot follow yourself!")}
 }
 
 Follow.prototype.create= function(){
