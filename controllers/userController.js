@@ -5,7 +5,7 @@ const Follow = require('../models/Follow')
 exports.sharedProfileData = async function(req, res, next) {
   let isVisitorsProfile = false
   let isFollowing = false
-  if (req.session.user) {
+  if (req.session.user) { 
     isVisitorsProfile = req.profileUser._id.equals(req.session.user._id)
     isFollowing = await Follow.isVisitorFollowing(req.profileUser._id, req.visitorId)
   }
@@ -75,9 +75,11 @@ exports.register = function(req, res) {
   })
 }
 
-exports.home = function(req, res) {
+exports.home =  async function(req, res) {
   if (req.session.user) {
-    res.render('home-dashboard')
+    //fetch feed of posts for current users
+    let posts = await Post.getFeed(req.session.user._id)
+    res.render('home-dashboard',{posts:posts})
   } else {
     res.render('home-guest', {regErrors: req.flash('regErrors')})
   }
