@@ -4,7 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Treep</title>
+  <title><%= typeof(title) == "undefined" ? 'Treep': `${title} | Treep`%> </title> 
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png"> 
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <script defer src="https://use.fontawesome.com/releases/v5.5.0/js/all.js" integrity="sha384-GqVMZRt5Gn7tB9D9q7ONtcp4gtHIUEW/yG7h98J7IpE3kpi+srfFyyB/04OV6pG0" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i" rel="stylesheet">
@@ -14,9 +18,8 @@
   <header class="header-bar mb-3">
     <div class="container d-flex flex-column flex-md-row align-items-center p-3">
       <h4 class="my-0 mr-md-auto font-weight-normal"><a href="/" class="text-white">Treep</a></h4>
-
-     <% if(user){ %>
-         <div class="flex-row my-3 my-md-0">
+    <% if(user){ %>
+        <div class="flex-row my-3 my-md-0">
         <a href="#" class="text-white mr-2 header-search-icon" title="Search" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-search"></i></a>
         <span class="text-white mr-2 header-chat-icon" title="Chat" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-comment"></i></span>
         <a href="/profile/<%= user.username%>" class="mr-2"><img title="My Profile" data-toggle="tooltip" data-placement="bottom" style="width: 32px; height: 32px; border-radius: 16px;" src=<%=user.avatar %>"></a>
@@ -41,9 +44,7 @@
           </div>
         </div>
       </form>      
-     <%}%>
-
-
-     
+    <%}%>
+  
     </div>
-  </header>
+  </header> 
