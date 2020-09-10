@@ -3,11 +3,11 @@ const usersCollection = require('../db').db().collection("users")
 const validator = require("validator")
 const md5 = require('md5')
 
-let User = function(data,getAvatar) {
+let User = function(data, getAvatar) {
   this.data = data
   this.errors = []
-  if(getAvatar==undefined){getAvatar = false}
-  if(getAvatar){this.getAvatar()}
+  if (getAvatar == undefined) {getAvatar = false}
+  if (getAvatar) {this.getAvatar()}
 }
 
 User.prototype.cleanUp = function() {
@@ -54,7 +54,7 @@ User.prototype.login = function() {
     this.cleanUp()
     usersCollection.findOne({username: this.data.username}).then((attemptedUser) => {
       if (attemptedUser && bcrypt.compareSync(this.data.password, attemptedUser.password)) {
-        this.data=attemptedUser
+        this.data = attemptedUser
         this.getAvatar()
         resolve("Congrats!")
       } else {
@@ -86,31 +86,49 @@ User.prototype.register = function() {
     }
   })
 }
-User.prototype.getAvatar = function(){
-  this.avatar =`https://gravatar.com/avatar/${md5(this.data.email)}?s=128`
+
+User.prototype.getAvatar = function() {
+  this.avatar = `https://gravatar.com/avatar/${md5(this.data.email)}?s=128`
 }
 
-User.findByUsername=function(username){
-  return new Promise (function(resolve,reject){
- if(typeof(username)!= "string"){
-   reject()
-   return
- }
-  usersCollection.findOne({username: username}).then(function(userDoc){
-  if(userDoc){
-    userDoc = new User(userDoc,true)
-    userDoc ={
-      _id:userDoc.data._id,
-      username:userDoc.data.username,
-      avatar:userDoc.avatar
+User.findByUsername = function(username) {
+  return new Promise(function(resolve, reject) {
+    if (typeof(username) != "string") {
+      reject()
+      return
     }
-    resolve(userDoc)
-  }
-  else{reject()}
-  }).catch(function(){reject()})
+    usersCollection.findOne({username: username}).then(function(userDoc) {
+      if (userDoc) {
+        userDoc = new User(userDoc, true)
+        userDoc = {
+          _id: userDoc.data._id,
+          username: userDoc.data.username,
+          avatar: userDoc.avatar
+        }
+        resolve(userDoc)
+      } else {
+        reject()
+      }
+    }).catch(function() {
+      reject()
+    })
   })
 }
 
+User.doesEmailExist = function(email) {
+  return new Promise(async function(resolve, reject) {
+    if (typeof(email) != "string") {
+      resolve(false)
+      return
+    }
 
+    let user = await usersCollection.findOne({email: email})
+    if (user) {
+      resolve(true)
+    } else {
+      resolve(false)
+    }
+  })
+}
 
 module.exports = User
