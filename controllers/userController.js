@@ -2,22 +2,34 @@ const User = require('../models/User')
 const Post = require('../models/Post')
 const Follow = require('../models/Follow')
 
+exports.doesUsernameExist = function(req, res) {
+  User.findByUsername(req.body.username).then(function() {
+    res.json(true)
+  }).catch(function() {
+    res.json(false)
+  })
+}
+
+exports.doesEmailExist = async function(req, res) {
+  let emailBool = await User.doesEmailExist(req.body.email)
+  res.json(emailBool)
+}
+
 exports.sharedProfileData = async function(req, res, next) {
   let isVisitorsProfile = false
   let isFollowing = false
-  if (req.session.user) { 
+  if (req.session.user) {
     isVisitorsProfile = req.profileUser._id.equals(req.session.user._id)
     isFollowing = await Follow.isVisitorFollowing(req.profileUser._id, req.visitorId)
   }
 
   req.isVisitorsProfile = isVisitorsProfile
   req.isFollowing = isFollowing
-  
-  //retrieve post follower and following counts
-  let postCountPromise =  Post.countPostsByAuthor(req.profileUser._id)
-  let followerCountPromise =  Follow.countFollowersById(req.profileUser._id)
-  let followingCountPromise =  Follow.countFollowingById(req.profileUser._id)
-  let[ postCount, followerCount, followingCount]  = await Promise.all([postCountPromise, followerCountPromise, followingCountPromise]) //array destructuring.
+  // retrieve post, follower, and following counts
+  let postCountPromise = Post.countPostsByAuthor(req.profileUser._id)
+  let followerCountPromise = Follow.countFollowersById(req.profileUser._id)
+  let followingCountPromise = Follow.countFollowingById(req.profileUser._id)
+  let [postCount, followerCount, followingCount] = await Promise.all([postCountPromise, followerCountPromise, followingCountPromise])
 
   req.postCount = postCount
   req.followerCount = followerCount
@@ -75,11 +87,11 @@ exports.register = function(req, res) {
   })
 }
 
-exports.home =  async function(req, res) {
+exports.home = async function(req, res) {
   if (req.session.user) {
-    //fetch feed of posts for current users
+    // fetch feed of posts for current user
     let posts = await Post.getFeed(req.session.user._id)
-    res.render('home-dashboard',{posts:posts})
+    res.render('home-dashboard', {posts: posts})
   } else {
     res.render('home-guest', {regErrors: req.flash('regErrors')})
   }
@@ -99,6 +111,7 @@ exports.profilePostsScreen = function(req, res) {
   Post.findByAuthorId(req.profileUser._id).then(function(posts) {
     console.log(req.profileUser)
     res.render('profile', {
+      title: `Profile for ${req.profileUser.username}`,
       currentPage: "posts",
       posts: posts,
       profileUsername: req.profileUser.username,
@@ -145,4 +158,4 @@ exports.profileFollowingScreen = async function(req, res) {
   } catch {
     res.render("404")
   }
- }
+}
