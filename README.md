@@ -1,3 +1,3 @@
 # Treep
 Basic social media app
-* Still under development
+* Readme loading
