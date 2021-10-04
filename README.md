@@ -15,7 +15,7 @@ Below is an installation guide:
 
 5.	Run **npm run watch** on the terminal to start the server on port 3000.
 
-6.	Finally, the system is accessed by typing in the url: localhost:3000
+6.	Finally, the system is accessed by typing in the url: **localhost:3000**
 
 7.	Email functionality can also be added bby heading over to postman , getting the api key and pasting it to the SENDGRIDAPIKEY variable in the .env file. 
 
