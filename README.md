@@ -22,7 +22,7 @@ A social media web application built with Node.js, Express, MongoDB, and EJS.
 ### 1. Clone the Repository
 
 ```bash
-git clone git@github.com:Jesse-Bett/Treep.git
+git clone git@github.com:jessechumo/Treep.git
 cd Treep
 ```
 
@@ -106,16 +106,8 @@ Open your browser and navigate to: **http://localhost:3000**
 3. Create a database user
 4. Get your connection string from "Connect" → "Connect your application"
 5. Add the connection string to your `.env` file
-6. In Network Access, add `0.0.0.0/0` to allow connections from anywhere (or your server's IP)
+6. In Network Access, add your server's IP to allow connections from it.
 
-## Deployment
-
-See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for detailed deployment instructions.
-
-**Recommended platforms:**
-- [Render.com](https://render.com) - Easiest setup, free tier available
-- [Railway.app](https://railway.app) - No spin-downs, $5 free credit/month
-- [Fly.io](https://fly.io) - Global edge network
 
 ## Tech Stack
 
@@ -142,12 +134,3 @@ treep/
 ├── db.js           # Database connection
 └── webpack.config.js
 ```
-
-## Notes
-
-- The `csurf` package is deprecated but still functional. Consider migrating to a modern CSRF protection solution in the future.
-- Make sure your MongoDB connection string includes the database name (e.g., `/treep` before the query parameters).
-
-## License
-
-ISC
