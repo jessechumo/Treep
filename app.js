@@ -1,8 +1,8 @@
 const express = require('express')
 const session = require('express-session')
-const MongoStore = require('connect-mongo')(session)
+const MongoStore = require('connect-mongo')
 const flash = require('connect-flash')
-const markdown = require('marked')
+const { marked } = require('marked')
 const csrf = require('csurf')
 const app = express()
 const sanitizeHTML = require('sanitize-html')
@@ -15,7 +15,9 @@ app.use('/api',require('./router-api'))
 
 let sessionOptions = session({
   secret: "JavaScript is sooooooooo coool",
-  store: new MongoStore({client: require('./db')}),
+  store: MongoStore.create({
+    client: require('./db')
+  }),
   resave: false,
   saveUninitialized: false,
   cookie: {maxAge: 1000 * 60 * 60 * 24, httpOnly: true}
@@ -27,7 +29,7 @@ app.use(flash())
 app.use(function(req, res, next) {
   // make our markdown function available from within ejs templates
   res.locals.filterUserHTML = function(content) {
-    return sanitizeHTML(markdown(content), {allowedTags: ['p', 'br', 'ul', 'ol', 'li', 'strong', 'bold', 'i', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'], allowedAttributes: {}})
+    return sanitizeHTML(marked.parse(content), {allowedTags: ['p', 'br', 'ul', 'ol', 'li', 'strong', 'bold', 'i', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'], allowedAttributes: {}})
   }
   
   // make all error and success flash messages available from all templates
@@ -64,6 +66,7 @@ app.use(function(err, req, res, next) {
       req.flash('errors', "Cross site request forgery detected.")
       req.session.save(() => res.redirect('/'))
     } else {
+      console.error('Error:', err.message)
       res.render("404")
     }
   }

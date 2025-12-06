@@ -1,6 +1,10 @@
 const Post = require('../models/Post')
 const sendgrid = require('@sendgrid/mail')
-sendgrid.setApiKey(process.env.SENDGRIDAPIKEY )
+
+// Only set SendGrid API key if it exists and is valid
+if (process.env.SENDGRIDAPIKEY && process.env.SENDGRIDAPIKEY.trim() !== '') {
+  sendgrid.setApiKey(process.env.SENDGRIDAPIKEY.trim())
+}
 
 exports.viewCreateScreen = function(req, res) {
   res.render('create-post')
@@ -9,13 +13,20 @@ exports.viewCreateScreen = function(req, res) {
 exports.create = function(req, res) {
   let post = new Post(req.body, req.session.user._id)
   post.create().then(function(newId) {
-    sendgrid.send({
-      to:'youremail@gmail.com', //replace this email with your email
-      from: 'test@test.com',
-      subject: 'congrats on creating a new post',
-      text:'Your recent post is getting noticed',
-      html:'You did a <strong>great</strong> job.'
-    })
+    // Try to send email notification (optional - don't fail if this doesn't work)
+    if (process.env.SENDGRIDAPIKEY && process.env.SENDGRIDAPIKEY.trim() !== '') {
+      sendgrid.send({
+        to: 'youremail@gmail.com', //replace this email with your email
+        from: 'test@test.com',
+        subject: 'congrats on creating a new post',
+        text: 'Your recent post is getting noticed',
+        html: 'You did a <strong>great</strong> job.'
+      }).catch(function(emailError) {
+        // Log email error but don't crash the app
+        console.warn('Failed to send email notification:', emailError.message)
+      })
+    }
+    
     req.flash("success", "New post successfully created.")
     req.session.save(() => res.redirect(`/post/${newId}`))
   }).catch(function(errors) {
@@ -36,8 +47,30 @@ exports.apiCreate = function(req, res) {
 exports.viewSingle = async function(req, res) {
   try {
     let post = await Post.findSingleById(req.params.id, req.visitorId)
-    res.render('single-post-screen', {post: post, title: post.title})
-  } catch {
+    
+    if (!post || !post.author) {
+      res.render('404')
+      return
+    }
+    
+    // Ensure _id is a string for template rendering
+    if (post._id) {
+      post._id = post._id.toString()
+    }
+    
+    // Ensure createdDate is a Date object
+    if (post.createdDate && !(post.createdDate instanceof Date)) {
+      post.createdDate = new Date(post.createdDate)
+    }
+    
+    // Ensure isVisitorOwner is a boolean
+    if (typeof post.isVisitorOwner !== 'boolean') {
+      post.isVisitorOwner = false
+    }
+    
+    res.render('single-post-screen', {post: post, title: post.title || 'Post'})
+  } catch (err) {
+    console.error('Error viewing single post:', err.message)
     res.render('404')
   }
 }

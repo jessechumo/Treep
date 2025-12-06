@@ -1,6 +1,6 @@
 const usersCollection = require('../db').db().collection("users")
 const followsCollection = require('../db').db().collection("follows")
-const ObjectID = require('mongodb').ObjectID
+const ObjectId = require('mongodb').ObjectId
 const User = require('./User')
 
 let Follow = function(followedUsername, authorId) {
@@ -22,7 +22,7 @@ Follow.prototype.validate = async function(action) {
     this.errors.push("You cannot follow a user that does not exist.")
   }
 
-  let doesFollowAlreadyExist = await followsCollection.findOne({followedId: this.followedId, authorId: new ObjectID(this.authorId)})
+  let doesFollowAlreadyExist = await followsCollection.findOne({followedId: this.followedId, authorId: new ObjectId(this.authorId)})
   if (action == "create") {
     if (doesFollowAlreadyExist) {this.errors.push("You are already following this user.")}
   }
@@ -40,7 +40,7 @@ Follow.prototype.create = function() {
     this.cleanUp()
     await this.validate("create")
     if (!this.errors.length) {
-      await followsCollection.insertOne({followedId: this.followedId, authorId: new ObjectID(this.authorId)})
+      await followsCollection.insertOne({followedId: this.followedId, authorId: new ObjectId(this.authorId)})
       resolve()
     } else {
       reject(this.errors)
@@ -53,7 +53,7 @@ Follow.prototype.delete = function() {
     this.cleanUp()
     await this.validate("delete")
     if (!this.errors.length) {
-      await followsCollection.deleteOne({followedId: this.followedId, authorId: new ObjectID(this.authorId)})
+      await followsCollection.deleteOne({followedId: this.followedId, authorId: new ObjectId(this.authorId)})
       resolve()
     } else {
       reject(this.errors)
@@ -62,7 +62,7 @@ Follow.prototype.delete = function() {
 }
 
 Follow.isVisitorFollowing = async function(followedId, visitorId) {
-  let followDoc = await followsCollection.findOne({followedId: followedId, authorId: new ObjectID(visitorId)})
+  let followDoc = await followsCollection.findOne({followedId: followedId, authorId: new ObjectId(visitorId)})
   if (followDoc) {
     return true
   } else {
