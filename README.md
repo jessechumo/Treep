@@ -1,6 +1,6 @@
 # Treep 🌴
 
-A social media web application built with Node.js, Express, MongoDB, and EJS.
+Travel Eat Repeat. A social media web application built with Node.js, Express, MongoDB, and EJS.
 
 ## Features
 
